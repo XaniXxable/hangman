@@ -1,136 +1,122 @@
-# File I/O und Structs
+# File I/O and Structs
 
-## Lernziel
+## Learning goal
 
-Das Arbeiten mit eigenen Datentypen und Dateioperationen soll am Beispiel eines Hangman-Spiels geübt werden.
+Working with own data types and data operation will be practiced using the hangman game.
 
-## Beschreibung
+## Description
 
-Schreiben Sie ein Programm, welches Wortlisten aus einer Datei einliest. Diese Wortlisten bilden die Basis für mehrere Runden Hangman. In jeder Runde rät der Benutzer einzelne Buchstaben und muss auf diese Weise das gesuchte Wort innerhalb eines Limits von 11 Zügen erraten.
+Write a program, which reads word lists from a file. These word list is the base for multiple rounds hangman. In each round guess the user one letter at a time and has to find the guessing word in a limit of 11 turns.
 
-## Datenstruktur
+## Data structure
 
-Speichern Sie die Wortlisten und das Spielergebnis des Benutzers (die Anzahl der benötigten Rateversuche) in einer einfach verketteten Liste. Die Wörter sollen als dynamische C-Strings am Heap gespeichert werden.
+Save the world list and the game result of the user(number of turns) in a simple linked list. The words should be save dynamic on the heap.
 
-## Dateiformat
+## File format
 
-Wortlisten werden in einer Textdatei gespeichert, wobei jeweils ein Wort in jeder einzelnen Zeile steht.
+Word list should be saved as text data, where each word has its own line.
 
-Einzelne Zeilen sind mit einem Zeilenumbruch (\n) abgeschlossen. Es dürfen zu Zeilenbeginn und Zeilenende beliebig viele Leerzeichen vorliegen, nicht jedoch innerhalb des Wortes. Wörter dürfen nur aus Zeichen des englischen Alphabets (A-Z und a-z) bestehen.
+Single lines are terminated with a line break(\n). There are multiple spaces at the start and at the end of the line, but not between the words. Words may only consists of characters from english alphabet (A-Z and a-z).
 
-Sollte eine Zeile nicht den Anforderungen entsprechen, so ist die Vokabeldatei ungültig (siehe Fehlermeldungen).
+If line does not meet the requirements, the vocabulary files is invalid (see error massages)
 
-## Funktionsweise
+## Functionality
 
-Das Programm wird mit einem Kommandozeilenparameter aufgerufen. Dieser gibt den Dateinamen der zu öffnenden Wortliste an. Sollte das Programm nicht auf diese Weise aufgerufen werden, so kommt es zu einer Fehlermeldung.
+The program will be used via command line. There will provide the filename for the word list. May the program not find the file or the called
+program doesn't require the requirements, it returns an error messages.
 
-In jeder Runde gibt das Programm in einer Zeile den Anfangsbuchstaben des gesuchten Wortes und eine Anzahl an `'_'` gefolgt von `" ([guesses])"` aus, wobei die Anzahl der `'_'` der Anzahl der restlichen Buchstaben entspricht und [guesses] durch die Anzahl der bisherigen falschen Rateversuche für dieses Wort zu ersetzen ist.
+In each turn the program prints the opening word and the number of `'_'` (length of the guessing word) followed by `'([guess])'`(guess = number of wrong guessing of current word).
 
-In einer weiteren Zeile wird der Benutzer mit dem Text `"Your guess: "` zur Eingabe eines Zeichens aufgefordert.
+In another line, the user is promoted to enter a letter with the text `'Your guess: '`.
 
-Das Programm liest im Anschluss ein Zeichen vom Benutzer ein. Die Verarbeitung der Eingabe erfolgt case insensitive. Sollte das Zeichen im gesuchten Wort vorkommen, so wird es an allen zutreffenden Stellen "aufgedeckt" und das `'_'` wird für zukünftige Ausgaben durch das entsprechende Zeichen ersetzt. Sollte das Zeichen im gesuchten Wort nicht vorkommen so wird der Wert [guesses] um 1 erhöht.
+The program reads the letter of the user. Input is case insensitive. May the letter be in the guessing word, so all matching letter will be displayed, if not the [guess] counter will be raised by one.
 
-Wenn der Wert [guesses] größer oder gleich 11 wird hat der Spieler diese Runde verloren. Es wird noch das gesuchte Wort gefolgt von `" (x_x)"` ausgegeben.
+If the value of [guess] is greater then 11, the player has lost. The guessing word will be displayed followed by `'(x_x)'`.
 
-Wenn der Spieler alle Zeichen des Wortes erraten hat, so hat er diese Runde gewonnen. Es wird das gesuchte Wort gefolgt von `" ([guesses])"` ausgegeben, wobei [guesses] durch die Anzahl der falschen Rateversuche ersetzt wird.
+If the player guessed all words, he has won the round. The guessing word will be displayed followed by `'([guess])'`.
 
-Es wird insgesamt für jedes Wort der Wortliste eine Runde gespielt, wobei die Reihenfolge von der der eingelesenen Datei vorgegeben ist.
+One round is played for each word in the list, in the order in which they appear in the imported file.
 
-Im Anschluss an die letzte Runde wird der Text `"won ([correct]/[numtotal])"` ausgegeben, wobei [correct] durch die Anzahl der korrekt erratenen Wörter und [numtotal] durch die Gesamtanzahl der zu erratenden Wörter zu ersetzen ist.
+After the last round the text `'won ([correct]/[numtotal])'` displayed. `correct` = number of correct guessed words. `numtotal` = overall number of guessing words.
 
-### Beispiel
+### Example
 
-gültige Wortliste
-
-```
-Progpipe
-      ESP
-```
-
-ungültige Wortliste
+valid word list
 
 ```
-Progpipe ESP
+Hangman
+      Rs
 ```
 
-Programmaufruf mit gültiger Wortliste und Userinput
+invalid word list
 
 ```
-$./ass-b2 wortliste.txt
-P_______ (0)
-Your guess: R
-Pr______ (0)
-Your guess: o
-Pro_____ (0)
+Hangman Rs
+```
+
+Program call with valid word list and user input
+
+```
+$ cargo run hangman word_list.txt
+H______ (0)
+Your guess: A
+Ha___a_ (0)
+Your guess: n
+Han__a_ (0)
 Your guess: g
-Prog____ (0)
-Your guess: j
-Prog____ (1)
-Your guess: h
-Prog____ (2)
-Your guess: p
-Progp_p_ (2)
-Your guess: i
-Progpip_ (2)
-Your guess: e
-Progpipe (2)
-E__ (0)
+Hang_a_ (0)
 Your guess: q
-E__ (1)
-Your guess: w
-E__ (2)
-Your guess: e
-E__ (2)
-Your guess: r
-E__ (3)
-Your guess: t
-E__ (4)
-Your guess: z
-E__ (5)
+Hang_a_ (1)
 Your guess: u
-E__ (6)
+Hang_a_ (2)
+Your guess: m
+Hangma_ (2)
+Your guess: n
+Hangman (2)
+R_ (0)
+Your guess: t
+R_ (1)
+Your guess: h
+R_ (2)
+Your guess: b
+R_ (3)
+Your guess: t
+R_ (4)
+Your guess: z
+R_ (5)
+Your guess: u
+R_ (6)
 Your guess: i
-E__ (7)
+R_ (7)
 Your guess: o
-E__ (8)
+R_ (8)
 Your guess: a
-E__ (9)
-Your guess: s
-ES_ (9)
+R_ (9)
+Your guess: z
+R_ (9)
 Your guess: d
-ES_ (10)
+R_ (10)
 Your guess: f
-ESP (x_x)
+Rs (x_x)
 won (1/2)
 ```
-Zu beachten: Das "$" vor dem Programmaufruf stellt die Komandozeile des Terminals dar.
+To note: The '$' is the begin of the command line of the terminal.
 
-### Rückgabewerte
+### Return values
 
-| Wert | Bedeutung   | Fehlermeldung   |
-| :--: | ----------- | ----------- |
-| 0    | Erfolgsfall | |
-| 1  | falsche Anzahl an Kommandozeilenparameter   | usage: [executable] filename\n |
-| 2   | Wortdatei kann nicht geöffnet werden   | ERROR: cannot open file [filename]\n |
-| 3   | Wortdatei ungültig | ERROR: file [filename] invalid\n |
-| 4   | kein Speicher kann mehr angefordert werden | ERROR: Out of Memory\n |
+| value | description   | error messages              |
+| :--:  | -----------   | -----------                 |
+| 0     | Success | |
+| 1     | wrong number of parameters                  | usage: cargo file [executable] filename\n |
+| 2     | word file cannot be opend                   | ERROR: cannot open file [filename]\n |
+| 3     | world list invalid                          | ERROR: file [filename] invalid\n |
+| 4     | no more memory can be used                  | ERROR: Out of Memory\n |
 
-## Spezifikation
+## Specification
 
-* keine zusätzlichen Ausgaben
-* alle Ausgaben erfolgen auf stdout
-  * keinerlei Ausgaben auf stderr
-* Dateiinhalt muss am Heap gespeichert werden
-  * Wortlisten und Spielergebnis werden in einer einfach verketteten Liste am Heap gespeichert
-  * Wörter werden als dynamische C-Strings am Heap gespeichert
-
-## Abgabe
-
-* Abgabe auf Progpipe mittels git
-* Dateiname: ass-b2.c
-* Abgabe mit git über die Kommandozeilenumgebung (**nicht** über das GitLab-Frontend)
-* Keine Tags notwendig - es wird der aktuellste Commit als Abgabe betrachtet.
-
-## Verantwortlicher Tutor
-* David Andrawes
-* Clemens Oberhauser
+* No extra output
+* All output take place at stdout
+  * No output at stderr
+* Data content has to be stored on the heap
+  * World lists and game score are stored in linked lists on the heap
+  * Word are stored as dynamic letters on the heap
